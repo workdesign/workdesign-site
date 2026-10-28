@@ -110,14 +110,13 @@
 
   <!-- お知らせデータの自動取得スクリプト -->
   <script>
-    const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwqS54f65YyR_x3QoYk-yB9YmI-3tE4y-a-GAS-URL/exec"; // ※既存のGAS URLを貼ってください
+    const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxYKGO8P8X0EhfxQHgRAm3cXsV_yQPsBWbUEJ4HBr23h_ESoXobO7sKp2OIeJz81dK-/exec"; 
 
     async function fetchNews() {
       const container = document.getElementById('news-container');
       try {
         const response = await fetch(GAS_ENDPOINT);
-        const data = await response.json();
-        
+        const data = await response.json();        
         if (!data || data.length === 0) {
           container.innerHTML = '<p class="text-gray-500 text-center py-4">現在お知らせはありません。</p>';
           return;
