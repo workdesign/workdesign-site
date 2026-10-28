@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お知らせ | 有限会社ワークデザイン</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- ヘッダー -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="font-bold text-xl tracking-tight text-slate-900">
+        有限会社ワークデザイン
+      </div>
+      <nav class="text-sm space-x-6 text-slate-600">
+        <a href="#" class="hover:text-blue-600 transition">ホーム</a>
+        <a href="#" class="hover:text-blue-600 transition font-semibold text-blue-600">お知らせ</a>
+        <a href="#" class="hover:text-blue-600 transition">会社概要</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="flex-grow max-w-4xl w-full mx-auto px-6 py-12">
+    <div class="mb-10 text-center sm:text-left">
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">お知らせ</h1>
+      <p class="text-slate-500 mt-2 text-sm">ワークデザインからの最新情報をお届けします。</p>
+    </div>
+
+    <!-- スケルトンローディング（読み込み中のプレースホルダー） -->
+    <div id="loading" class="space-y-4">
+      <div class="bg-white p-6 rounded-xl border border-slate-200/80 animate-pulse">
+        <div class="h-4 bg-slate-200 rounded w-24 mb-3"></div>
+        <div class="h-6 bg-slate-200 rounded w-3/4 mb-2"></div>
+        <div class="h-4 bg-slate-200 rounded w-full"></div>
+      </div>
+      <div class="bg-white p-6 rounded-xl border border-slate-200/80 animate-pulse">
+        <div class="h-4 bg-slate-200 rounded w-24 mb-3"></div>
+        <div class="h-6 bg-slate-200 rounded w-2/4 mb-2"></div>
+        <div class="h-4 bg-slate-200 rounded w-5/6"></div>
+      </div>
+    </div>
+
+    <!-- お知らせ一覧 -->
+    <div id="news-list" class="space-y-4 hidden"></div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="bg-slate-900 text-slate-400 text-xs text-center py-6 mt-12 border-t border-slate-800">
+    <div class="max-w-5xl mx-auto px-6">
+      &copy; Work Design Co., Ltd. All Rights Reserved.
+    </div>
+  </footer>
+
+  <script>
+    // ご自身のGASのウェブアプリURLに置き換えてください
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxYKGO8P8X0EhfxQHgRAm3cXsV_yQPsBWbUEJ4HBr23h_ESoXobO7sKp2OIeJz81dK-/exec';
+
+    async function fetchNews() {
+      const loadingEl = document.getElementById('loading');
+      const newsListEl = document.getElementById('news-list');
+
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        if (data.length === 0) {
+          newsListEl.innerHTML = '<p class="text-slate-500 text-center py-8">現在お知らせはありません。</p>';
+        } else {
+          newsListEl.innerHTML = data.map(item => `
+            <article class="bg-white p-6 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition duration-200 ease-in-out">
+              <div class="flex items-center space-x-3 mb-2">
+                <span class="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                  ${item.date ? item.date.split('T')[0] : '日付なし'}
+                </span>
+                <span class="text-xs font-medium text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">
+                  お知らせ
+                </span>
+              </div>
+              <h2 class="text-lg font-bold text-slate-900 mb-2 hover:text-blue-600 transition cursor-pointer">
+                ${item.title || ''}
+              </h2>
+              <p class="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">
+                ${item.body || ''}
+              </p>
+            </article>
+          `).join('');
+        }
+
+        loadingEl.classList.add('hidden');
+        newsListEl.classList.remove('hidden');
+      } catch (error) {
+        console.error('Fetch error:', error);
+        loadingEl.innerHTML = `
+          <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+            データの読み込みに失敗しました。時間をおいて再度お試しください。
+          </div>
+        `;
+      }
+    }
+
+    fetchNews();
+  </script>
+</body>
+</html>
